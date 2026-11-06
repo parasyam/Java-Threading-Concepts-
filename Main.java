@@ -4,16 +4,17 @@ public class Main {
         Thread thread = new Thread(()->{
             System.out.println("we are in the new thread "+ Thread.currentThread().getName());
             System.out.println("current thread pripority"+ Thread.currentThread().getPriority() );
+             throw new RuntimeException("Something went wrong!");
 
         });
         // to rename 
          thread.setName("new worker thread");
         //  to assign priority 
         thread.setPriority(Thread.MAX_PRIORITY);
-        System.out.println("which thread we are running :"+Thread.currentThread().getName()+" this is before starting thread");
         thread.start();
-        System.out.println("which thread we are running :"+Thread.currentThread().getName()+" this is After starting thread");
-        
-
+        thread.setUncaughtExceptionHandler((t,e)->{
+            System.out.println("A critical error happend in thead "+ t.getName()+"the errror is"+e.getMessage());
+        });
+       
     }
 }
