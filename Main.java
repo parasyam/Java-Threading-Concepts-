@@ -2,41 +2,58 @@ import java.math.BigInteger;
 
 public class Main{
     public static void main(String[] args){
+        Inventory in=new Inventory();
+        increment i=new increment(in);
+        decrement d= new decrement(in);
+        i.start();
+        d.start();
+        try{
+            i.join();
+            d.join();
+        }
+        catch(InterruptedException e){
 
-  BigInteger base=new BigInteger("10");
-  BigInteger power=new BigInteger("20");
-  Thread c=new Thread(new Compu(base,power));
-  c.start();
-  try{
-    Thread.sleep(1000);
-  }
-  catch(InterruptedException e){
+        }
+        in.show();
 
-  }
-  c.interrupt();
+
     }
 
-    public static class Compu implements Runnable{
-        private BigInteger base;
-        private BigInteger power;
-         private BigInteger r=BigInteger.ONE;
-         Compu(BigInteger base,BigInteger power){
-            this.base=base;
-            this.power=power;
-
-         }
-        
+    public static class increment extends Thread{
+        Inventory inv;
+        increment(Inventory inv){
+            this.inv=inv;
+        }
         public void run(){
-            
-            for(BigInteger i=BigInteger.ZERO;i.compareTo(power)<0;i=i.add(BigInteger.ONE)){
-                if(Thread.currentThread().isInterrupted()){
-                    System.out.println("it is intruppted");
-                    return ;
-                }
-                r=r.multiply(base);
+            for(int i=0;i<1000;i++){
+                inv.incr();
             }
-            System.out.println(r);
+        }
+        
+    }
+    public static class decrement extends Thread{
+        Inventory inv;
+        decrement(Inventory inv){
+            this.inv=inv;
+        }
+        public void run(){
+            for(int i=0;i<1000;i++){
+                inv.decr();
+            }
+        }
+        
+    }
 
+    public static class Inventory{
+        private int item=0;
+        synchronized void incr(){
+            item++;
+        }
+        synchronized void decr(){
+            item--;
+        }
+         void show(){
+            System.out.println(item);
         }
 
     }
