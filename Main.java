@@ -1,33 +1,44 @@
+import java.math.BigInteger;
+
 public class Main{
     public static void main(String[] args){
-        System.out.println("before thread line");
-        MyThreads t = new MyThreads();
-        t.start();
-       System.out.println("after thread 1");
-        Thread t1= new Thread(new MyT());
-        t1.start();
-       
-         System.out.println("after thread 2");
 
+  BigInteger base=new BigInteger("10");
+  BigInteger power=new BigInteger("20");
+  Thread c=new Thread(new Compu(base,power));
+  c.start();
+  try{
+    Thread.sleep(1000);
+  }
+  catch(InterruptedException e){
 
-         Thread t2  =new Thread(()->{
-           System.out.println("this is thead"+Thread.currentThread().getName());
-           
-         });
-         t2.run();
+  }
+  c.interrupt();
+    }
+
+    public static class Compu implements Runnable{
+        private BigInteger base;
+        private BigInteger power;
+         private BigInteger r=BigInteger.ONE;
+         Compu(BigInteger base,BigInteger power){
+            this.base=base;
+            this.power=power;
+
+         }
+        
+        public void run(){
+            
+            for(BigInteger i=BigInteger.ZERO;i.compareTo(power)<0;i=i.add(BigInteger.ONE)){
+                if(Thread.currentThread().isInterrupted()){
+                    System.out.println("it is intruppted");
+                    return ;
+                }
+                r=r.multiply(base);
+            }
+            System.out.println(r);
+
+        }
 
     }
+
 }
-
-class MyThreads extends Thread {
-    public void run(){
-        System.out.println("thread is running"+ this.getName());
-    }
-}
-
-class MyT implements Runnable{
-    // runnable can not return a result can not throw checked exceptions 
-    public void run(){
-        System.out.println("thread is running with runnable ");
-    }
-} 
