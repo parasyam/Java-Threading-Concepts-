@@ -45,12 +45,17 @@ public class Main{
     }
 
     public static class Inventory{
+        Object lock =new Object();
         private int item=0;
-        synchronized void incr(){
+         void incr(){
+            synchronized(lock){
             item++;
+            }
         }
-        synchronized void decr(){
+        void decr(){
+            synchronized(lock){
             item--;
+            }
         }
          void show(){
             System.out.println(item);
