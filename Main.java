@@ -1,101 +1,33 @@
-package thread.creation.example;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-public class Main {
-    public static final int maxim=999;
-    
+public class Main{
     public static void main(String[] args){
-        Random randon= new Random();
-        Valt valt = new Valt(randon.nextInt(maxim));
-        List<Thread> threads =new ArrayList<>();
-        threads.add(new AscendingHacker(valt));
-        threads.add(new DescendingHacker(valt));
-        threads.add(new Police());
-        for(Thread thread : threads){
-            thread.start();
-        }
+        System.out.println("before thread line");
+        MyThreads t = new MyThreads();
+        t.start();
+       System.out.println("after thread 1");
+        Thread t1= new Thread(new MyT());
+        t1.start();
+       
+         System.out.println("after thread 2");
 
 
-    }
-    
-    public static class Valt{
-        private int password;
-        public Valt(int password){
-            this.password=password;
-        }
-        public boolean isCorrectPassword(int guess){
-            try{
-                Thread.sleep(10);
-            }catch(InterruptedException e){
-                
-            }
-            return this.password==guess;
-        }
-    }
+         Thread t2  =new Thread(()->{
+           System.out.println("this is thead"+Thread.currentThread().getName());
+           
+         });
+         t2.run();
 
-    public static abstract class HackerThread extends Thread{
-
-        protected Valt valt;
-        public HackerThread(Valt valt){
-            this.valt=valt;
-            this.setName(this.getClass().getSimpleName());
-            this.setPriority(MAX_PRIORITY);
-        }
-        public void start(){
-            System.out.println("Starting thread: "+this.getName());
-            super.start();
-        }
-    }
-
-    public static class AscendingHacker extends HackerThread{
-        public AscendingHacker(Valt valt){
-            super(valt);
-        }
-        @Override 
-        public void run(){
-            for(int i=0;i<maxim;i++){
-                if(valt.isCorrectPassword(i)){
-                    System.out.println(this.getName()+"guessed the password "+ i);
-                    System.exit(0);
-                }
-            }
-
-        }
-    }
-
-    public static class DescendingHacker extends HackerThread{
-        public DescendingHacker(Valt valt){
-            super(valt);
-        }
-        @Override 
-        public void run(){
-            for(int i=maxim;i>=0;i--){
-                if(valt.isCorrectPassword(i)){
-                    System.out.println(this.getName()+"guessed the password "+ i);
-                    System.exit(0);
-                }
-            }
-
-        }
-
-    }
-   
-    public static class Police extends Thread{
-        @Override 
-        public void run(){
-            for(int i=0;i<10;i++){
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    
-                }
-                
-            }
-            System.out.println("Hackers are caught");
-            System.exit(0);
-        }
     }
 }
+
+class MyThreads extends Thread {
+    public void run(){
+        System.out.println("thread is running"+ this.getName());
+    }
+}
+
+class MyT implements Runnable{
+    // runnable can not return a result can not throw checked exceptions 
+    public void run(){
+        System.out.println("thread is running with runnable ");
+    }
+} 
