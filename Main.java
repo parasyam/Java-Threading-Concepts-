@@ -1,34 +1,41 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.*;
+
 
 public class Main{
-    static Semaphore s=new Semaphore(5);
-    public static void parking(int vechile){
-        try{
-            s.acquire();
-            System.out.println("Vehicle " + vechile + " entered parking");
-             Thread.sleep(5000);
-            System.out.println("Vehicle " + vechile + " left parking");
-            s.release();
-
-        }catch(InterruptedException e){
-            
-        }
-
-    }
-    public static void main(String[] parms){
-        List<Thread> l=new ArrayList<>();
+    public static void main   (String[] parms)throws Exception{
+        List<Integer> a=new ArrayList<>();
         for(int i=0;i<10;i++){
-            int vechile=i+1;
-            Thread t=new Thread(()->{
-                parking(vechile);
-            });
-            l.add(t);
-            
+            a.add(i);
         }
-        for(Thread i:l){
-            i.start();
-        }
+        ExecutorService ex=Executors.newFixedThreadPool(2);
+        int mid =a.size()/2;
+        Callable<Integer> task1=()->{
+            int sum=0;
+            for (int i = 0; i < mid; i++) {
+                sum += a.get(i);
+            }
+            return sum;
+        };
+        Callable<Integer> task2=()->{
+            int sum=0;
+            for(int i=mid;i<10;i++){
+                sum+=a.get(i);
+            }
+            return sum;
+
+        };
+        Future<Integer> f1=ex.submit(task1);
+        Future<Integer> f2=ex.submit(task2);
+       int total = f1.get() + f2.get();
+        System.out.println("Final Sum: " + total);
+         ex.shutdown();
+
+       
+        
+
+      
+        
     }
 }
